@@ -89,7 +89,7 @@ export default function Hero() {
             </motion.h1>
 
             {/* Bottom Subtitle Descriptor */}
-            <motion.p variants={itemVariants} className="text-sm md:text-base text-slate-300 max-w-lg leading-relaxed pt-2 relative z-20">
+            <motion.p variants={itemVariants} className="hidden md:block text-sm md:text-base text-slate-300 max-w-lg leading-relaxed pt-2 relative z-20">
               {isRTL
                 ? "رؤية تنموية طموحة ومشاريع مهيكلة تضع ساكنة الداخلة وادي الذهب في قلب الأولويات بكل مسؤولية ووفاء."
                 : "Une vision de développement claire et des projets structurants pour la région Dakhla-Oued Ed-Dahab."}
@@ -130,7 +130,7 @@ export default function Hero() {
         initial={{ y: 150, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-        className={`absolute ${isRTL ? 'left-[-30%] sm:left-[-5%] lg:left-0' : 'right-[-30%] sm:right-[-5%] lg:right-0'} bottom-0 w-[140%] sm:w-[90%] lg:w-[900px] xl:w-[1000px] h-[55vh] sm:h-[75vh] min-h-[400px] sm:min-h-[500px] lg:h-[90vh] pointer-events-none z-[5] opacity-30 sm:opacity-100`}
+        className={`absolute ${isRTL ? 'left-[-35%] sm:left-[-5%] lg:left-0' : 'right-[-35%] sm:right-[-5%] lg:right-0'} bottom-10 sm:bottom-0 w-[140%] sm:w-[90%] lg:w-[900px] xl:w-[1000px] h-[65vh] sm:h-[75vh] min-h-[450px] sm:min-h-[500px] lg:h-[90vh] pointer-events-none z-[5] opacity-100`}
         style={{
           WebkitMaskImage: "linear-gradient(to bottom, black 85%, transparent 100%)",
           maskImage: "linear-gradient(to bottom, black 85%, transparent 100%)"

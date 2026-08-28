@@ -2,6 +2,7 @@
 
 import { useLanguage } from "@/app/context/LanguageContext";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function ServicesSection() {
   const { t, isRTL } = useLanguage();
@@ -28,6 +29,7 @@ export default function ServicesSection() {
       title_fr: "Modernisation des Routes & Équipements",
       desc_ar: "تأهيل البنيات التحتية الأساسية وتطوير المحاور الطرقية لربط أحياء الداخلة والمراكز الاقتصادية برؤية عصرية مستدامة.",
       desc_fr: "Développement des axes routiers et modernisation des équipements urbains pour fluidifier la mobilité et stimuler l'économie.",
+      image: "/yenja2.png",
     },
     {
       style: "card-blue",
@@ -37,6 +39,7 @@ export default function ServicesSection() {
       title_fr: "Appui à la Pêche & Entrepreneuriat",
       desc_ar: "مبادرات نوعية لتمكين مهنيي الصيد التقليدي وتشجيع الشباب حاملي المشاريع والتعاونيات لخلق دينامية اقتصادية واعدة بالجهة.",
       desc_fr: "Programmes ciblés pour moderniser la pêche artisanale et encourager les coopératives et TPE créatrices d'emplois durables.",
+      image: "/yenja3.png",
     },
     {
       style: "card-navy",
@@ -46,6 +49,7 @@ export default function ServicesSection() {
       title_fr: "Soutien Scolaire & Solidarité Humaine",
       desc_ar: "دعم التمدرس ومحاربة الهدر المدرسي، وإطلاق قوافل اجتماعية وطبية متواصلة تلامس الاحتياجات اليومية للأسر والناشئة.",
       desc_fr: "Caravanes médicales, bourses d'études et actions solidaires continues au service des familles vulnérables et des jeunes talents.",
+      image: "/yenja4.png",
     },
   ];
 
@@ -87,10 +91,10 @@ export default function ServicesSection() {
               key={i}
               variants={itemVariants}
               whileHover={{ y: -10 }}
-              className={`${srv.style} p-8 sm:p-10 lg:p-12 rounded-[32px] flex flex-col justify-between transition-all duration-300 shadow-xl min-h-[420px] hover:shadow-2xl hover:shadow-accent/10`}
+              className={`${srv.style} p-8 sm:p-10 lg:p-12 rounded-[32px] flex flex-col justify-between transition-all duration-300 shadow-xl !min-h-[400px] !h-[400px] md:!h-[440px] lg:!h-[460px] hover:shadow-2xl hover:shadow-accent/10 relative overflow-hidden group`}
             >
               {/* Top Subtitle & Big Bold Title with generous vertical gap */}
-              <div className="space-y-5 pt-2">
+              <div className="space-y-5 pt-2 relative z-10">
                 <span className="text-xs sm:text-sm font-bold opacity-75 uppercase tracking-wider block">
                   {isRTL ? srv.tag_ar : srv.tag_fr}
                 </span>
@@ -100,13 +104,16 @@ export default function ServicesSection() {
                 </h3>
               </div>
 
-              {/* Divider & Description with generous top margin */}
-              <div className="pt-8 mt-auto">
-                <div className="w-16 h-1 bg-current opacity-30 mb-6 rounded-full" />
-                <p className="text-xs sm:text-sm leading-relaxed opacity-90">
-                  {isRTL ? srv.desc_ar : srv.desc_fr}
-                </p>
+              {/* Background Image */}
+              <div className="absolute bottom-0 left-0 w-full h-[70%] sm:h-[85%] opacity-100 transition-opacity duration-300 pointer-events-none">
+                <Image 
+                  src={srv.image} 
+                  alt={isRTL ? srv.title_ar : srv.title_fr}
+                  fill
+                  className={`object-contain object-bottom ${isRTL ? 'sm:object-left-bottom' : 'sm:object-right-bottom'}`}
+                />
               </div>
+
             </motion.div>
           ))}
         </motion.div>
