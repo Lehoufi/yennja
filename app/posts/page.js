@@ -201,6 +201,11 @@ export default function PostsPage() {
                     <img
                       src={post.image}
                       alt={isRTL ? post.title_ar : post.title_fr}
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = "/backg.png";
+                      }}
                       className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                       loading="lazy"
                     />
