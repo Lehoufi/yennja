@@ -1,20 +1,38 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import { useLanguage } from "@/app/context/LanguageContext";
 import { postsData } from "@/app/data/posts";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function PostsPage() {
   const { t, isRTL } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const postsPerPage = 6;
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const postsPerPage = 9;
+
+  // Handle ESC key and scroll lock for modal
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setSelectedVideo(null);
+    };
+    if (selectedVideo) {
+      document.body.style.overflow = "hidden";
+      window.addEventListener("keydown", handleKeyDown);
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedVideo]);
 
   // Extract unique categories
   const categories = useMemo(() => {
@@ -183,20 +201,30 @@ export default function PostsPage() {
                     <span>{isRTL ? post.title_ar : post.title_fr}</span>
                     <a
                       href={post.fbUrl}
-                      target="_blank"
+                      target={post.isVideo ? undefined : "_blank"}
                       rel="noopener noreferrer"
-                      className="font-bold text-accent hover:underline mx-1 block mt-1"
+                      onClick={(e) => {
+                        if (post.isVideo) {
+                          e.preventDefault();
+                          setSelectedVideo(post);
+                        }
+                      }}
+                      className="font-bold text-accent hover:underline mx-1 block mt-1 cursor-pointer"
                     >
-                      {isRTL ? "قراءة المزيد..." : "lire plus..."}
+                      {post.isVideo ? (isRTL ? "تشغيل الفيديو..." : "lire la vidéo...") : (isRTL ? "قراءة المزيد..." : "lire plus...")}
                     </a>
                   </div>
 
-                  {/* Image */}
-                  <a
-                    href={post.fbUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="relative block w-full aspect-[4/5] rounded-2xl overflow-hidden shadow-lg"
+                  {/* Image / Video Card */}
+                  <div
+                    onClick={() => {
+                      if (post.isVideo) {
+                        setSelectedVideo(post);
+                      } else {
+                        window.open(post.fbUrl, "_blank");
+                      }
+                    }}
+                    className="relative block w-full aspect-[4/5] rounded-2xl overflow-hidden shadow-lg cursor-pointer group/card"
                   >
                     <img
                       src={post.image}
@@ -209,10 +237,29 @@ export default function PostsPage() {
                       className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+                    {/* Play Badge for Video Posts */}
+                    {post.isVideo && (
+                      <>
+                        <div className="absolute top-3.5 right-3.5 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-white text-xs font-bold shadow-lg">
+                          <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+                          <span>{isRTL ? "فيديو" : "Vidéo"}</span>
+                        </div>
+
+                        {/* Center Play Button Overlay */}
+                        <div className="absolute inset-0 z-15 flex items-center justify-center pointer-events-none">
+                          <div className="w-16 h-16 rounded-full bg-accent text-[#070F1E] shadow-[0_0_35px_rgba(255,215,0,0.5)] flex items-center justify-center group-hover/card:scale-110 group-hover/card:shadow-[0_0_45px_rgba(255,215,0,0.7)] transition-all duration-300">
+                            <svg className="w-7 h-7 fill-current translate-x-0.5" viewBox="0 0 24 24">
+                              <path d="M8 5v14l11-7z" />
+                            </svg>
+                          </div>
+                        </div>
+                      </>
+                    )}
 
                     {/* Hover Stats */}
-                    <div className="absolute inset-0 bg-[#070F1E]/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
+                    <div className="absolute inset-0 bg-[#070F1E]/90 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center z-20">
                       <div className="flex gap-8">
                         <div className="flex flex-col items-center">
                           <span className="text-2xl font-black text-white">{post.likes}</span>
@@ -234,7 +281,7 @@ export default function PostsPage() {
                         </div>
                       </div>
                     </div>
-                  </a>
+                  </div>
                 </motion.div>
               ))}
             </motion.div>
@@ -316,6 +363,69 @@ export default function PostsPage() {
 
         </div>
       </main>
+
+      {/* Video Modal Player - Direct Fullscreen */}
+      <AnimatePresence>
+        {selectedVideo && (
+          <div
+            className="fixed inset-0 z-50 w-screen h-screen bg-black flex flex-col items-center justify-center p-0 m-0 overflow-hidden"
+          >
+            {/* Top Bar */}
+            <div className="absolute top-0 inset-x-0 z-30 flex items-center justify-between px-6 py-4 bg-gradient-to-b from-black/85 to-transparent pointer-events-auto">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-white p-0.5 border border-accent flex items-center justify-center shrink-0">
+                  <Image src="/logo2.png" alt="PAM" width={24} height={24} className="object-contain" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white leading-tight">
+                    {isRTL ? "الخطاط ينجى" : "El Khattat Yenja"}
+                  </h3>
+                  <span className="text-[11px] text-accent font-semibold">
+                    {isRTL ? `نشر في ${selectedVideo.date_ar}` : `Publié le ${selectedVideo.date_fr}`}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <a
+                  href={selectedVideo.fbUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 px-6 py-3 rounded-full font-bold text-sm text-white transition-all duration-200 shadow-lg hover:scale-105 active:scale-95"
+                  style={{ background: '#1877F2', boxShadow: '0 4px 15px rgba(24,119,242,0.4)' }}
+                >
+                  {/* Facebook Icon */}
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
+                  <span>{isRTL ? "فتح على فيسبوك" : "Ouvrir sur Facebook"}</span>
+                </a>
+
+                <button
+                  onClick={() => setSelectedVideo(null)}
+                  type="button"
+                  aria-label="Close"
+                  className="w-10 h-10 rounded-full bg-white/15 hover:bg-red-500 hover:text-white text-white flex items-center justify-center transition-all duration-200 border border-white/20 cursor-pointer"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Direct Fullscreen Video Embed */}
+            <div className="relative w-full h-full flex items-center justify-center bg-black pt-16 pb-4 px-2">
+              <iframe
+                src={selectedVideo.embedUrl}
+                className="w-full h-full max-w-5xl border-0 rounded-2xl shadow-2xl"
+                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                allowFullScreen={true}
+              />
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
 
       <Footer />
     </div>
