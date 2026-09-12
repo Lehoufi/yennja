@@ -110,6 +110,7 @@ export default function ServicesSection() {
                   src={srv.image} 
                   alt={isRTL ? srv.title_ar : srv.title_fr}
                   fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
                   className={`object-contain object-bottom ${isRTL ? 'sm:object-left-bottom' : 'sm:object-right-bottom'}`}
                 />
               </div>

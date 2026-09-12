@@ -44,7 +44,8 @@ export default function Hero() {
           src="/backg.png"
           alt="جهة الداخلة وادي الذهب"
           fill
-          className="object-cover object-center opacity-30 mix-blend-overlay"
+          sizes="100vw"
+          className="object-cover object-center opacity-25"
           priority
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-hero)] via-[var(--bg-hero)]/85 to-transparent" />
@@ -141,7 +142,7 @@ export default function Hero() {
           alt="الخطاط ينجى - El Khattat Yenja"
           fill
           sizes="(max-width: 1024px) 800px, 1200px"
-          className="object-contain object-bottom scale-105 drop-shadow-[0_0_50px_rgba(0,0,0,0.6)]"
+          className="object-contain object-bottom scale-105"
           priority
         />
       </motion.div>
